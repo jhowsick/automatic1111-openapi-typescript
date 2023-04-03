@@ -1,0 +1,20 @@
+{
+  "name": "automatic1111-openapi-typescript",
+  "version": "1.0.0",
+  "description": "automatic1111 codegen typescript api",
+  "main": "index.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jhowsick/automatic1111-openapi-typescript.git"
+  },
+  "author": "j.howsick",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jhowsick/automatic1111-openapi-typescript/issues"
+  },
+  "homepage": "https://github.com/jhowsick/automatic1111-openapi-typescript#readme"
+}
