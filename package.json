@@ -16,8 +16,5 @@
   "bugs": {
     "url": "https://github.com/jhowsick/automatic1111-openapi-typescript/issues"
   },
-  "homepage": "https://github.com/jhowsick/automatic1111-openapi-typescript#readme",
-  "dependencies": {
-    "isomorphic-fetch": "^3.0.0"
-  }
+  "homepage": "https://github.com/jhowsick/automatic1111-openapi-typescript#readme"
 }
