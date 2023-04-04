@@ -1,5 +1,5 @@
 # automatic1111-openapi-typescript
 
-Typescript Fetch Api generated with swagga-codegen:
+Typescript Fetch Api generated with openapi-generator:
 
-`swagger-codegen generate -i http://localhost:7860/openapi.json -l typescript-fetch -o ./`
+`openapi-generator generate -i http://localhost/openapi.json -g typescript-fetch -o ./ --skip-validate-spec`
