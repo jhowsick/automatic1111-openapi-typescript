@@ -110,6 +110,12 @@ export interface ControlNetUnitRequest {
      * @memberof ControlNetUnitRequest
      */
     guessmode?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ControlNetUnitRequest
+     */
+    pixelPerfect?: boolean;
 }
 
 /**
@@ -145,6 +151,7 @@ export function ControlNetUnitRequestFromJSONTyped(json: any, ignoreDiscriminato
         'guidanceStart': !exists(json, 'guidance_start') ? undefined : json['guidance_start'],
         'guidanceEnd': !exists(json, 'guidance_end') ? undefined : json['guidance_end'],
         'guessmode': !exists(json, 'guessmode') ? undefined : json['guessmode'],
+        'pixelPerfect': !exists(json, 'pixel_perfect') ? undefined : json['pixel_perfect'],
     };
 }
 
@@ -171,6 +178,7 @@ export function ControlNetUnitRequestToJSON(value?: ControlNetUnitRequest | null
         'guidance_start': value.guidanceStart,
         'guidance_end': value.guidanceEnd,
         'guessmode': value.guessmode,
+        'pixel_perfect': value.pixelPerfect,
     };
 }
 

@@ -548,6 +548,12 @@ export interface Flags {
      */
     controlnetDir?: string;
     /**
+     * Path to directory with annotator model directories
+     * @type {string}
+     * @memberof Flags
+     */
+    controlnetAnnotatorModelsPath?: string;
+    /**
      * do not switch the ControlNet models to 16-bit floats (only needed without --no-half)
      * @type {string}
      * @memberof Flags
@@ -686,6 +692,7 @@ export function FlagsFromJSONTyped(json: any, ignoreDiscriminator: boolean): Fla
         'noDownloadSdModel': !exists(json, 'no_download_sd_model') ? undefined : json['no_download_sd_model'],
         'addnetMaxModelCount': !exists(json, 'addnet_max_model_count') ? undefined : json['addnet_max_model_count'],
         'controlnetDir': !exists(json, 'controlnet_dir') ? undefined : json['controlnet_dir'],
+        'controlnetAnnotatorModelsPath': !exists(json, 'controlnet_annotator_models_path') ? undefined : json['controlnet_annotator_models_path'],
         'noHalfControlnet': !exists(json, 'no_half_controlnet') ? undefined : json['no_half_controlnet'],
         'ldsrModelsPath': !exists(json, 'ldsr_models_path') ? undefined : json['ldsr_models_path'],
         'loraDir': !exists(json, 'lora_dir') ? undefined : json['lora_dir'],
@@ -791,6 +798,7 @@ export function FlagsToJSON(value?: Flags | null): any {
         'no_download_sd_model': value.noDownloadSdModel,
         'addnet_max_model_count': value.addnetMaxModelCount,
         'controlnet_dir': value.controlnetDir,
+        'controlnet_annotator_models_path': value.controlnetAnnotatorModelsPath,
         'no_half_controlnet': value.noHalfControlnet,
         'ldsr_models_path': value.ldsrModelsPath,
         'lora_dir': value.loraDir,

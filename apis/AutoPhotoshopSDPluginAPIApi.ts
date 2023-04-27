@@ -156,6 +156,36 @@ export class AutoPhotoshopSDPluginAPIApi extends runtime.BaseAPI {
     }
 
     /**
+     * List Available Loras
+     */
+    async listAvailableLorasSdapiAutoPhotoshopSdLoraListGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/sdapi/auto-photoshop-sd/lora/list`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * List Available Loras
+     */
+    async listAvailableLorasSdapiAutoPhotoshopSdLoraListGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.listAvailableLorasSdapiAutoPhotoshopSdLoraListGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Loadhistory
      */
     async loadHistorySdapiAutoPhotoshopSdHistoryLoadPostRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {

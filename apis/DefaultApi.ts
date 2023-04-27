@@ -197,6 +197,10 @@ export interface LoginLoginPost0Request {
     clientSecret?: string;
 }
 
+export interface ModuleListControlnetModuleListGetRequest {
+    aliasNames?: boolean;
+}
+
 export interface PnginfoapiSdapiV1PngInfoPostRequest {
     pNGInfoRequest: PNGInfoRequest;
 }
@@ -1632,8 +1636,12 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Module List
      */
-    async moduleListControlnetModuleListGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async moduleListControlnetModuleListGetRaw(requestParameters: ModuleListControlnetModuleListGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
         const queryParameters: any = {};
+
+        if (requestParameters.aliasNames !== undefined) {
+            queryParameters['alias_names'] = requestParameters.aliasNames;
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -1654,8 +1662,8 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Module List
      */
-    async moduleListControlnetModuleListGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
-        const response = await this.moduleListControlnetModuleListGetRaw(initOverrides);
+    async moduleListControlnetModuleListGet(requestParameters: ModuleListControlnetModuleListGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.moduleListControlnetModuleListGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
