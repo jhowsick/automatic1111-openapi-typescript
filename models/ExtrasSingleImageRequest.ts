@@ -74,13 +74,13 @@ export interface ExtrasSingleImageRequest {
      */
     upscalingCrop?: boolean;
     /**
-     * The name of the main upscaler to use, it has to be one of this list: None , Lanczos , Nearest , ESRGAN_4x , R-ESRGAN 4x+ , R-ESRGAN 4x+ Anime6B
+     * The name of the main upscaler to use, it has to be one of this list: 
      * @type {string}
      * @memberof ExtrasSingleImageRequest
      */
     upscaler1?: string;
     /**
-     * The name of the secondary upscaler to use, it has to be one of this list: None , Lanczos , Nearest , ESRGAN_4x , R-ESRGAN 4x+ , R-ESRGAN 4x+ Anime6B
+     * The name of the secondary upscaler to use, it has to be one of this list: 
      * @type {string}
      * @memberof ExtrasSingleImageRequest
      */

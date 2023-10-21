@@ -1,12 +1,7 @@
-apis/AutoPhotoshopSDPluginAPIApi.ts
 apis/DefaultApi.ts
 apis/index.ts
 index.ts
 models/BodyDetectControlnetDetectPost.ts
-models/ControlNetStableDiffusionProcessingImg2Img.ts
-models/ControlNetStableDiffusionProcessingTxt2Img.ts
-models/ControlNetUnitRequest.ts
-models/ControlnetResizeMode.ts
 models/CreateResponse.ts
 models/EmbeddingItem.ts
 models/EmbeddingsResponse.ts
@@ -22,6 +17,7 @@ models/HTTPValidationError.ts
 models/HypernetworkItem.ts
 models/ImageToImageResponse.ts
 models/InterrogateRequest.ts
+models/LatentUpscalerModeItem.ts
 models/LocationInner.ts
 models/MemoryResponse.ts
 models/ModulesApiModelsProgressResponse.ts
@@ -33,11 +29,15 @@ models/PredictBody.ts
 models/PreprocessResponse.ts
 models/ProgressRequest.ts
 models/PromptStyleItem.ts
+models/QuicksettingsHint.ts
 models/RealesrganItem.ts
 models/Request.ts
 models/ResetBody.ts
 models/SDModelItem.ts
+models/SDVaeItem.ts
 models/SamplerItem.ts
+models/ScriptArg.ts
+models/ScriptInfo.ts
 models/ScriptsList.ts
 models/StableDiffusionProcessingImg2Img.ts
 models/StableDiffusionProcessingTxt2Img.ts

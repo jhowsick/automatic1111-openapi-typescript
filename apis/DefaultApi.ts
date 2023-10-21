@@ -16,8 +16,6 @@
 import * as runtime from '../runtime';
 import type {
   BodyDetectControlnetDetectPost,
-  ControlNetStableDiffusionProcessingImg2Img,
-  ControlNetStableDiffusionProcessingTxt2Img,
   CreateResponse,
   EmbeddingsResponse,
   Estimation,
@@ -31,6 +29,7 @@ import type {
   HypernetworkItem,
   ImageToImageResponse,
   InterrogateRequest,
+  LatentUpscalerModeItem,
   MemoryResponse,
   ModulesApiModelsProgressResponse,
   ModulesProgressProgressResponse,
@@ -41,10 +40,13 @@ import type {
   PreprocessResponse,
   ProgressRequest,
   PromptStyleItem,
+  QuicksettingsHint,
   RealesrganItem,
   ResetBody,
   SDModelItem,
+  SDVaeItem,
   SamplerItem,
+  ScriptInfo,
   ScriptsList,
   StableDiffusionProcessingImg2Img,
   StableDiffusionProcessingTxt2Img,
@@ -55,10 +57,6 @@ import type {
 import {
     BodyDetectControlnetDetectPostFromJSON,
     BodyDetectControlnetDetectPostToJSON,
-    ControlNetStableDiffusionProcessingImg2ImgFromJSON,
-    ControlNetStableDiffusionProcessingImg2ImgToJSON,
-    ControlNetStableDiffusionProcessingTxt2ImgFromJSON,
-    ControlNetStableDiffusionProcessingTxt2ImgToJSON,
     CreateResponseFromJSON,
     CreateResponseToJSON,
     EmbeddingsResponseFromJSON,
@@ -85,6 +83,8 @@ import {
     ImageToImageResponseToJSON,
     InterrogateRequestFromJSON,
     InterrogateRequestToJSON,
+    LatentUpscalerModeItemFromJSON,
+    LatentUpscalerModeItemToJSON,
     MemoryResponseFromJSON,
     MemoryResponseToJSON,
     ModulesApiModelsProgressResponseFromJSON,
@@ -105,14 +105,20 @@ import {
     ProgressRequestToJSON,
     PromptStyleItemFromJSON,
     PromptStyleItemToJSON,
+    QuicksettingsHintFromJSON,
+    QuicksettingsHintToJSON,
     RealesrganItemFromJSON,
     RealesrganItemToJSON,
     ResetBodyFromJSON,
     ResetBodyToJSON,
     SDModelItemFromJSON,
     SDModelItemToJSON,
+    SDVaeItemFromJSON,
+    SDVaeItemToJSON,
     SamplerItemFromJSON,
     SamplerItemToJSON,
+    ScriptInfoFromJSON,
+    ScriptInfoToJSON,
     ScriptsListFromJSON,
     ScriptsListToJSON,
     StableDiffusionProcessingImg2ImgFromJSON,
@@ -127,16 +133,16 @@ import {
     UpscalerItemToJSON,
 } from '../models';
 
+export interface ApiInfoInfoGetRequest {
+    serialize?: boolean;
+}
+
+export interface ApiInfoInfoGet0Request {
+    serialize?: boolean;
+}
+
 export interface BuildResourceAssetsPathGetRequest {
     path: string;
-}
-
-export interface ControlnetImg2imgControlnetImg2imgPostRequest {
-    controlNetStableDiffusionProcessingImg2Img: ControlNetStableDiffusionProcessingImg2Img;
-}
-
-export interface ControlnetTxt2imgControlnetTxt2imgPostRequest {
-    controlNetStableDiffusionProcessingTxt2Img: ControlNetStableDiffusionProcessingTxt2Img;
 }
 
 export interface CreateEmbeddingSdapiV1CreateEmbeddingPostRequest {
@@ -149,6 +155,10 @@ export interface CreateHypernetworkSdapiV1CreateHypernetworkPostRequest {
 
 export interface DetectControlnetDetectPostRequest {
     bodyDetectControlnetDetectPost?: BodyDetectControlnetDetectPost;
+}
+
+export interface DownloadSysinfoInternalSysinfoGetRequest {
+    attachment?: any;
 }
 
 export interface ExtrasBatchImagesApiSdapiV1ExtraBatchImagesPostRequest {
@@ -167,8 +177,23 @@ export interface FileDeprecatedFilePathGetRequest {
     path: string;
 }
 
-export interface FileFilePathGetRequest {
-    path: string;
+export interface FileFilePathOrUrlGetRequest {
+    pathOrUrl: string;
+}
+
+export interface FileFilePathOrUrlHeadRequest {
+    pathOrUrl: string;
+}
+
+export interface GetMetadataSdExtraNetworksMetadataGetRequest {
+    page?: string;
+    item?: string;
+}
+
+export interface GetSingleCardSdExtraNetworksGetSingleCardGetRequest {
+    page?: string;
+    tabname?: string;
+    name?: string;
 }
 
 export interface Img2imgapiSdapiV1Img2imgPostRequest {
@@ -195,6 +220,10 @@ export interface LoginLoginPost0Request {
     scope?: string;
     clientId?: string;
     clientSecret?: string;
+}
+
+export interface ModelListControlnetModelListGetRequest {
+    update?: boolean;
 }
 
 export interface ModuleListControlnetModuleListGetRequest {
@@ -245,12 +274,26 @@ export interface ResetIteratorResetPost0Request {
     resetBody: ResetBody;
 }
 
+export interface ReverseProxyProxyUrlPathGetRequest {
+    urlPath: string;
+}
+
+export interface ReverseProxyProxyUrlPathHeadRequest {
+    urlPath: string;
+}
+
 export interface SetConfigSdapiV1OptionsPostRequest {
     body: object;
 }
 
 export interface StaticResourceStaticPathGetRequest {
     path: string;
+}
+
+export interface StreamStreamSessionHashRunComponentIdGetRequest {
+    sessionHash: string;
+    run: number;
+    componentId: number;
 }
 
 export interface Text2imgapiSdapiV1Txt2imgPostRequest {
@@ -265,10 +308,82 @@ export interface TrainHypernetworkSdapiV1TrainHypernetworkPostRequest {
     body: object;
 }
 
+export interface UploadFileUploadPostRequest {
+    files: Array<Blob>;
+}
+
 /**
  * 
  */
 export class DefaultApi extends runtime.BaseAPI {
+
+    /**
+     * Api Info
+     */
+    async apiInfoInfoGetRaw(requestParameters: ApiInfoInfoGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.serialize !== undefined) {
+            queryParameters['serialize'] = requestParameters.serialize;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/info`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Api Info
+     */
+    async apiInfoInfoGet(requestParameters: ApiInfoInfoGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.apiInfoInfoGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Api Info
+     */
+    async apiInfoInfoGet_1Raw(requestParameters: ApiInfoInfoGet0Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.serialize !== undefined) {
+            queryParameters['serialize'] = requestParameters.serialize;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/info/`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Api Info
+     */
+    async apiInfoInfoGet_1(requestParameters: ApiInfoInfoGet0Request = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.apiInfoInfoGet_1Raw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * App Id
@@ -299,7 +414,7 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * App Id
      */
-    async appIdAppIdGet_1Raw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+    async appIdAppIdGet_2Raw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -317,8 +432,8 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * App Id
      */
-    async appIdAppIdGet_1(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
-        const response = await this.appIdAppIdGet_1Raw(initOverrides);
+    async appIdAppIdGet_2(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+        const response = await this.appIdAppIdGet_2Raw(initOverrides);
         return await response.value();
     }
 
@@ -357,68 +472,32 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
-     * Controlnet Img2Img
+     * Control Types
      */
-    async controlnetImg2imgControlnetImg2imgPostRaw(requestParameters: ControlnetImg2imgControlnetImg2imgPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ImageToImageResponse>> {
-        if (requestParameters.controlNetStableDiffusionProcessingImg2Img === null || requestParameters.controlNetStableDiffusionProcessingImg2Img === undefined) {
-            throw new runtime.RequiredError('controlNetStableDiffusionProcessingImg2Img','Required parameter requestParameters.controlNetStableDiffusionProcessingImg2Img was null or undefined when calling controlnetImg2imgControlnetImg2imgPost.');
-        }
-
+    async controlTypesControlnetControlTypesGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        headerParameters['Content-Type'] = 'application/json';
-
         const response = await this.request({
-            path: `/controlnet/img2img`,
-            method: 'POST',
+            path: `/controlnet/control_types`,
+            method: 'GET',
             headers: headerParameters,
             query: queryParameters,
-            body: ControlNetStableDiffusionProcessingImg2ImgToJSON(requestParameters.controlNetStableDiffusionProcessingImg2Img),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => ImageToImageResponseFromJSON(jsonValue));
-    }
-
-    /**
-     * Controlnet Img2Img
-     */
-    async controlnetImg2imgControlnetImg2imgPost(requestParameters: ControlnetImg2imgControlnetImg2imgPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ImageToImageResponse> {
-        const response = await this.controlnetImg2imgControlnetImg2imgPostRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
-     * Controlnet Txt2Img
-     */
-    async controlnetTxt2imgControlnetTxt2imgPostRaw(requestParameters: ControlnetTxt2imgControlnetTxt2imgPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TextToImageResponse>> {
-        if (requestParameters.controlNetStableDiffusionProcessingTxt2Img === null || requestParameters.controlNetStableDiffusionProcessingTxt2Img === undefined) {
-            throw new runtime.RequiredError('controlNetStableDiffusionProcessingTxt2Img','Required parameter requestParameters.controlNetStableDiffusionProcessingTxt2Img was null or undefined when calling controlnetTxt2imgControlnetTxt2imgPost.');
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
         }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        const response = await this.request({
-            path: `/controlnet/txt2img`,
-            method: 'POST',
-            headers: headerParameters,
-            query: queryParameters,
-            body: ControlNetStableDiffusionProcessingTxt2ImgToJSON(requestParameters.controlNetStableDiffusionProcessingTxt2Img),
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => TextToImageResponseFromJSON(jsonValue));
     }
 
     /**
-     * Controlnet Txt2Img
+     * Control Types
      */
-    async controlnetTxt2imgControlnetTxt2imgPost(requestParameters: ControlnetTxt2imgControlnetTxt2imgPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TextToImageResponse> {
-        const response = await this.controlnetTxt2imgControlnetTxt2imgPostRaw(requestParameters, initOverrides);
+    async controlTypesControlnetControlTypesGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.controlTypesControlnetControlTypesGetRaw(initOverrides);
         return await response.value();
     }
 
@@ -518,6 +597,40 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async detectControlnetDetectPost(requestParameters: DetectControlnetDetectPostRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.detectControlnetDetectPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Download Sysinfo
+     */
+    async downloadSysinfoInternalSysinfoGetRaw(requestParameters: DownloadSysinfoInternalSysinfoGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.attachment !== undefined) {
+            queryParameters['attachment'] = requestParameters.attachment;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/internal/sysinfo`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Download Sysinfo
+     */
+    async downloadSysinfoInternalSysinfoGet(requestParameters: DownloadSysinfoInternalSysinfoGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.downloadSysinfoInternalSysinfoGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -688,9 +801,9 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * File
      */
-    async fileFilePathGetRaw(requestParameters: FileFilePathGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
-        if (requestParameters.path === null || requestParameters.path === undefined) {
-            throw new runtime.RequiredError('path','Required parameter requestParameters.path was null or undefined when calling fileFilePathGet.');
+    async fileFilePathOrUrlGetRaw(requestParameters: FileFilePathOrUrlGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.pathOrUrl === null || requestParameters.pathOrUrl === undefined) {
+            throw new runtime.RequiredError('pathOrUrl','Required parameter requestParameters.pathOrUrl was null or undefined when calling fileFilePathOrUrlGet.');
         }
 
         const queryParameters: any = {};
@@ -698,7 +811,7 @@ export class DefaultApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/file={path}`.replace(`{${"path"}}`, encodeURIComponent(String(requestParameters.path))),
+            path: `/file={path_or_url}`.replace(`{${"path_or_url"}}`, encodeURIComponent(String(requestParameters.pathOrUrl))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -714,8 +827,42 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * File
      */
-    async fileFilePathGet(requestParameters: FileFilePathGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
-        const response = await this.fileFilePathGetRaw(requestParameters, initOverrides);
+    async fileFilePathOrUrlGet(requestParameters: FileFilePathOrUrlGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.fileFilePathOrUrlGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * File
+     */
+    async fileFilePathOrUrlHeadRaw(requestParameters: FileFilePathOrUrlHeadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.pathOrUrl === null || requestParameters.pathOrUrl === undefined) {
+            throw new runtime.RequiredError('pathOrUrl','Required parameter requestParameters.pathOrUrl was null or undefined when calling fileFilePathOrUrlHead.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/file={path_or_url}`.replace(`{${"path_or_url"}}`, encodeURIComponent(String(requestParameters.pathOrUrl))),
+            method: 'HEAD',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * File
+     */
+    async fileFilePathOrUrlHead(requestParameters: FileFilePathOrUrlHeadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.fileFilePathOrUrlHeadRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -778,7 +925,7 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Get Config
      */
-    async getConfigConfigGet_2Raw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async getConfigConfigGet_3Raw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -800,8 +947,8 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Get Config
      */
-    async getConfigConfigGet_2(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
-        const response = await this.getConfigConfigGet_2Raw(initOverrides);
+    async getConfigConfigGet_3(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.getConfigConfigGet_3Raw(initOverrides);
         return await response.value();
     }
 
@@ -864,7 +1011,7 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Get Current User
      */
-    async getCurrentUserUserGet_3Raw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
+    async getCurrentUserUserGet_4Raw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -886,8 +1033,8 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Get Current User
      */
-    async getCurrentUserUserGet_3(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
-        const response = await this.getCurrentUserUserGet_3Raw(initOverrides);
+    async getCurrentUserUserGet_4(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
+        const response = await this.getCurrentUserUserGet_4Raw(initOverrides);
         return await response.value();
     }
 
@@ -970,6 +1117,62 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Get Latent Upscale Modes
+     */
+    async getLatentUpscaleModesSdapiV1LatentUpscaleModesGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<LatentUpscalerModeItem>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/sdapi/v1/latent-upscale-modes`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(LatentUpscalerModeItemFromJSON));
+    }
+
+    /**
+     * Get Latent Upscale Modes
+     */
+    async getLatentUpscaleModesSdapiV1LatentUpscaleModesGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<LatentUpscalerModeItem>> {
+        const response = await this.getLatentUpscaleModesSdapiV1LatentUpscaleModesGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get Loras
+     */
+    async getLorasSdapiV1LorasGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/sdapi/v1/loras`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Get Loras
+     */
+    async getLorasSdapiV1LorasGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.getLorasSdapiV1LorasGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Get Memory
      */
     async getMemorySdapiV1MemoryGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MemoryResponse>> {
@@ -992,6 +1195,44 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async getMemorySdapiV1MemoryGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MemoryResponse> {
         const response = await this.getMemorySdapiV1MemoryGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get Metadata
+     */
+    async getMetadataSdExtraNetworksMetadataGetRaw(requestParameters: GetMetadataSdExtraNetworksMetadataGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.page !== undefined) {
+            queryParameters['page'] = requestParameters.page;
+        }
+
+        if (requestParameters.item !== undefined) {
+            queryParameters['item'] = requestParameters.item;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/sd_extra_networks/metadata`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Get Metadata
+     */
+    async getMetadataSdExtraNetworksMetadataGet(requestParameters: GetMetadataSdExtraNetworksMetadataGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.getMetadataSdExtraNetworksMetadataGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -1100,6 +1341,32 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Get Script Info
+     */
+    async getScriptInfoSdapiV1ScriptInfoGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<ScriptInfo>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/sdapi/v1/script-info`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ScriptInfoFromJSON));
+    }
+
+    /**
+     * Get Script Info
+     */
+    async getScriptInfoSdapiV1ScriptInfoGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<ScriptInfo>> {
+        const response = await this.getScriptInfoSdapiV1ScriptInfoGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Get Scripts List
      */
     async getScriptsListSdapiV1ScriptsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ScriptsList>> {
@@ -1152,6 +1419,74 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Get Sd Vaes
+     */
+    async getSdVaesSdapiV1SdVaeGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<SDVaeItem>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/sdapi/v1/sd-vae`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(SDVaeItemFromJSON));
+    }
+
+    /**
+     * Get Sd Vaes
+     */
+    async getSdVaesSdapiV1SdVaeGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SDVaeItem>> {
+        const response = await this.getSdVaesSdapiV1SdVaeGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get Single Card
+     */
+    async getSingleCardSdExtraNetworksGetSingleCardGetRaw(requestParameters: GetSingleCardSdExtraNetworksGetSingleCardGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        if (requestParameters.page !== undefined) {
+            queryParameters['page'] = requestParameters.page;
+        }
+
+        if (requestParameters.tabname !== undefined) {
+            queryParameters['tabname'] = requestParameters.tabname;
+        }
+
+        if (requestParameters.name !== undefined) {
+            queryParameters['name'] = requestParameters.name;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/sd_extra_networks/get-single-card`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Get Single Card
+     */
+    async getSingleCardSdExtraNetworksGetSingleCardGet(requestParameters: GetSingleCardSdExtraNetworksGetSingleCardGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.getSingleCardSdExtraNetworksGetSingleCardGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Get Token
      */
     async getTokenTokenGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
@@ -1180,7 +1515,7 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Get Token
      */
-    async getTokenTokenGet_4Raw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+    async getTokenTokenGet_5Raw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -1198,8 +1533,8 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Get Token
      */
-    async getTokenTokenGet_4(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
-        const response = await this.getTokenTokenGet_4Raw(initOverrides);
+    async getTokenTokenGet_5(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+        const response = await this.getTokenTokenGet_5Raw(initOverrides);
         return await response.value();
     }
 
@@ -1330,6 +1665,96 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * <Lambda>
+     */
+    async lambdaInternalPingGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/internal/ping`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * <Lambda>
+     */
+    async lambdaInternalPingGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.lambdaInternalPingGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * <Lambda>
+     */
+    async lambdaInternalProfileStartupGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/internal/profile-startup`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * <Lambda>
+     */
+    async lambdaInternalProfileStartupGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.lambdaInternalProfileStartupGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * <Lambda>
+     */
+    async lambdaInternalSysinfoDownloadGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/internal/sysinfo-download`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * <Lambda>
+     */
+    async lambdaInternalSysinfoDownloadGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.lambdaInternalSysinfoDownloadGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Login Check
      */
     async loginCheckLoginCheckGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
@@ -1362,7 +1787,7 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Login Check
      */
-    async loginCheckLoginCheckGet_5Raw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async loginCheckLoginCheckGet_6Raw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -1384,8 +1809,8 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Login Check
      */
-    async loginCheckLoginCheckGet_5(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
-        const response = await this.loginCheckLoginCheckGet_5Raw(initOverrides);
+    async loginCheckLoginCheckGet_6(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.loginCheckLoginCheckGet_6Raw(initOverrides);
         return await response.value();
     }
 
@@ -1469,13 +1894,13 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Login
      */
-    async loginLoginPost_6Raw(requestParameters: LoginLoginPost0Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async loginLoginPost_7Raw(requestParameters: LoginLoginPost0Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
         if (requestParameters.username === null || requestParameters.username === undefined) {
-            throw new runtime.RequiredError('username','Required parameter requestParameters.username was null or undefined when calling loginLoginPost_6.');
+            throw new runtime.RequiredError('username','Required parameter requestParameters.username was null or undefined when calling loginLoginPost_7.');
         }
 
         if (requestParameters.password === null || requestParameters.password === undefined) {
-            throw new runtime.RequiredError('password','Required parameter requestParameters.password was null or undefined when calling loginLoginPost_6.');
+            throw new runtime.RequiredError('password','Required parameter requestParameters.password was null or undefined when calling loginLoginPost_7.');
         }
 
         const queryParameters: any = {};
@@ -1538,8 +1963,8 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Login
      */
-    async loginLoginPost_6(requestParameters: LoginLoginPost0Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
-        const response = await this.loginLoginPost_6Raw(requestParameters, initOverrides);
+    async loginLoginPost_7(requestParameters: LoginLoginPost0Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.loginLoginPost_7Raw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -1606,8 +2031,12 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Model List
      */
-    async modelListControlnetModelListGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async modelListControlnetModelListGetRaw(requestParameters: ModelListControlnetModelListGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
         const queryParameters: any = {};
+
+        if (requestParameters.update !== undefined) {
+            queryParameters['update'] = requestParameters.update;
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -1628,8 +2057,8 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Model List
      */
-    async modelListControlnetModelListGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
-        const response = await this.modelListControlnetModelListGetRaw(initOverrides);
+    async modelListControlnetModelListGet(requestParameters: ModelListControlnetModelListGetRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.modelListControlnetModelListGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -1744,13 +2173,13 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Predict
      */
-    async predictApiApiNamePost_7Raw(requestParameters: PredictApiApiNamePost0Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async predictApiApiNamePost_8Raw(requestParameters: PredictApiApiNamePost0Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
         if (requestParameters.apiName === null || requestParameters.apiName === undefined) {
-            throw new runtime.RequiredError('apiName','Required parameter requestParameters.apiName was null or undefined when calling predictApiApiNamePost_7.');
+            throw new runtime.RequiredError('apiName','Required parameter requestParameters.apiName was null or undefined when calling predictApiApiNamePost_8.');
         }
 
         if (requestParameters.predictBody === null || requestParameters.predictBody === undefined) {
-            throw new runtime.RequiredError('predictBody','Required parameter requestParameters.predictBody was null or undefined when calling predictApiApiNamePost_7.');
+            throw new runtime.RequiredError('predictBody','Required parameter requestParameters.predictBody was null or undefined when calling predictApiApiNamePost_8.');
         }
 
         const queryParameters: any = {};
@@ -1777,8 +2206,8 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Predict
      */
-    async predictApiApiNamePost_7(requestParameters: PredictApiApiNamePost0Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
-        const response = await this.predictApiApiNamePost_7Raw(requestParameters, initOverrides);
+    async predictApiApiNamePost_8(requestParameters: PredictApiApiNamePost0Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.predictApiApiNamePost_8Raw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -1826,13 +2255,13 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Predict
      */
-    async predictRunApiNamePost_8Raw(requestParameters: PredictRunApiNamePost0Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async predictRunApiNamePost_9Raw(requestParameters: PredictRunApiNamePost0Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
         if (requestParameters.apiName === null || requestParameters.apiName === undefined) {
-            throw new runtime.RequiredError('apiName','Required parameter requestParameters.apiName was null or undefined when calling predictRunApiNamePost_8.');
+            throw new runtime.RequiredError('apiName','Required parameter requestParameters.apiName was null or undefined when calling predictRunApiNamePost_9.');
         }
 
         if (requestParameters.predictBody === null || requestParameters.predictBody === undefined) {
-            throw new runtime.RequiredError('predictBody','Required parameter requestParameters.predictBody was null or undefined when calling predictRunApiNamePost_8.');
+            throw new runtime.RequiredError('predictBody','Required parameter requestParameters.predictBody was null or undefined when calling predictRunApiNamePost_9.');
         }
 
         const queryParameters: any = {};
@@ -1859,8 +2288,8 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Predict
      */
-    async predictRunApiNamePost_8(requestParameters: PredictRunApiNamePost0Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
-        const response = await this.predictRunApiNamePost_8Raw(requestParameters, initOverrides);
+    async predictRunApiNamePost_9(requestParameters: PredictRunApiNamePost0Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.predictRunApiNamePost_9Raw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -1961,6 +2390,32 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Quicksettings Hint
+     */
+    async quicksettingsHintInternalQuicksettingsHintGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<QuicksettingsHint>>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/internal/quicksettings-hint`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(QuicksettingsHintFromJSON));
+    }
+
+    /**
+     * Quicksettings Hint
+     */
+    async quicksettingsHintInternalQuicksettingsHintGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<QuicksettingsHint>> {
+        const response = await this.quicksettingsHintInternalQuicksettingsHintGetRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Refresh Checkpoints
      */
     async refreshCheckpointsSdapiV1RefreshCheckpointsPostRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
@@ -1987,6 +2442,96 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async refreshCheckpointsSdapiV1RefreshCheckpointsPost(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.refreshCheckpointsSdapiV1RefreshCheckpointsPostRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Refresh Loras
+     */
+    async refreshLorasSdapiV1RefreshLorasPostRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/sdapi/v1/refresh-loras`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Refresh Loras
+     */
+    async refreshLorasSdapiV1RefreshLorasPost(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.refreshLorasSdapiV1RefreshLorasPostRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Refresh Vae
+     */
+    async refreshVaeSdapiV1RefreshVaePostRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/sdapi/v1/refresh-vae`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Refresh Vae
+     */
+    async refreshVaeSdapiV1RefreshVaePost(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.refreshVaeSdapiV1RefreshVaePostRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Reloadapi
+     */
+    async reloadapiSdapiV1ReloadCheckpointPostRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/sdapi/v1/reload-checkpoint`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Reloadapi
+     */
+    async reloadapiSdapiV1ReloadCheckpointPost(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.reloadapiSdapiV1ReloadCheckpointPostRaw(initOverrides);
         return await response.value();
     }
 
@@ -2030,9 +2575,9 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Reset Iterator
      */
-    async resetIteratorResetPost_9Raw(requestParameters: ResetIteratorResetPost0Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+    async resetIteratorResetPost_10Raw(requestParameters: ResetIteratorResetPost0Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
         if (requestParameters.resetBody === null || requestParameters.resetBody === undefined) {
-            throw new runtime.RequiredError('resetBody','Required parameter requestParameters.resetBody was null or undefined when calling resetIteratorResetPost_9.');
+            throw new runtime.RequiredError('resetBody','Required parameter requestParameters.resetBody was null or undefined when calling resetIteratorResetPost_10.');
         }
 
         const queryParameters: any = {};
@@ -2059,8 +2604,76 @@ export class DefaultApi extends runtime.BaseAPI {
     /**
      * Reset Iterator
      */
-    async resetIteratorResetPost_9(requestParameters: ResetIteratorResetPost0Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
-        const response = await this.resetIteratorResetPost_9Raw(requestParameters, initOverrides);
+    async resetIteratorResetPost_10(requestParameters: ResetIteratorResetPost0Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.resetIteratorResetPost_10Raw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Reverse Proxy
+     */
+    async reverseProxyProxyUrlPathGetRaw(requestParameters: ReverseProxyProxyUrlPathGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.urlPath === null || requestParameters.urlPath === undefined) {
+            throw new runtime.RequiredError('urlPath','Required parameter requestParameters.urlPath was null or undefined when calling reverseProxyProxyUrlPathGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/proxy={url_path}`.replace(`{${"url_path"}}`, encodeURIComponent(String(requestParameters.urlPath))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Reverse Proxy
+     */
+    async reverseProxyProxyUrlPathGet(requestParameters: ReverseProxyProxyUrlPathGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.reverseProxyProxyUrlPathGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Reverse Proxy
+     */
+    async reverseProxyProxyUrlPathHeadRaw(requestParameters: ReverseProxyProxyUrlPathHeadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.urlPath === null || requestParameters.urlPath === undefined) {
+            throw new runtime.RequiredError('urlPath','Required parameter requestParameters.urlPath was null or undefined when calling reverseProxyProxyUrlPathHead.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/proxy={url_path}`.replace(`{${"url_path"}}`, encodeURIComponent(String(requestParameters.urlPath))),
+            method: 'HEAD',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Reverse Proxy
+     */
+    async reverseProxyProxyUrlPathHead(requestParameters: ReverseProxyProxyUrlPathHeadRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.reverseProxyProxyUrlPathHeadRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -2128,6 +2741,36 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async setConfigSdapiV1OptionsPost(requestParameters: SetConfigSdapiV1OptionsPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.setConfigSdapiV1OptionsPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Settings
+     */
+    async settingsControlnetSettingsGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/controlnet/settings`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Settings
+     */
+    async settingsControlnetSettingsGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.settingsControlnetSettingsGetRaw(initOverrides);
         return await response.value();
     }
 
@@ -2226,6 +2869,48 @@ export class DefaultApi extends runtime.BaseAPI {
     }
 
     /**
+     * Stream
+     */
+    async streamStreamSessionHashRunComponentIdGetRaw(requestParameters: StreamStreamSessionHashRunComponentIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.sessionHash === null || requestParameters.sessionHash === undefined) {
+            throw new runtime.RequiredError('sessionHash','Required parameter requestParameters.sessionHash was null or undefined when calling streamStreamSessionHashRunComponentIdGet.');
+        }
+
+        if (requestParameters.run === null || requestParameters.run === undefined) {
+            throw new runtime.RequiredError('run','Required parameter requestParameters.run was null or undefined when calling streamStreamSessionHashRunComponentIdGet.');
+        }
+
+        if (requestParameters.componentId === null || requestParameters.componentId === undefined) {
+            throw new runtime.RequiredError('componentId','Required parameter requestParameters.componentId was null or undefined when calling streamStreamSessionHashRunComponentIdGet.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/stream/{session_hash}/{run}/{component_id}`.replace(`{${"session_hash"}}`, encodeURIComponent(String(requestParameters.sessionHash))).replace(`{${"run"}}`, encodeURIComponent(String(requestParameters.run))).replace(`{${"component_id"}}`, encodeURIComponent(String(requestParameters.componentId))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Stream
+     */
+    async streamStreamSessionHashRunComponentIdGet(requestParameters: StreamStreamSessionHashRunComponentIdGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.streamStreamSessionHashRunComponentIdGetRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Text2Imgapi
      */
     async text2imgapiSdapiV1Txt2imgPostRaw(requestParameters: Text2imgapiSdapiV1Txt2imgPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TextToImageResponse>> {
@@ -2255,6 +2940,36 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async text2imgapiSdapiV1Txt2imgPost(requestParameters: Text2imgapiSdapiV1Txt2imgPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TextToImageResponse> {
         const response = await this.text2imgapiSdapiV1Txt2imgPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Theme Css
+     */
+    async themeCssThemeCssGetRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/theme.css`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<string>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Theme Css
+     */
+    async themeCssThemeCssGet(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
+        const response = await this.themeCssThemeCssGetRaw(initOverrides);
         return await response.value();
     }
 
@@ -2321,6 +3036,93 @@ export class DefaultApi extends runtime.BaseAPI {
      */
     async trainHypernetworkSdapiV1TrainHypernetworkPost(requestParameters: TrainHypernetworkSdapiV1TrainHypernetworkPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TrainResponse> {
         const response = await this.trainHypernetworkSdapiV1TrainHypernetworkPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Unloadapi
+     */
+    async unloadapiSdapiV1UnloadCheckpointPostRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/sdapi/v1/unload-checkpoint`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Unloadapi
+     */
+    async unloadapiSdapiV1UnloadCheckpointPost(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.unloadapiSdapiV1UnloadCheckpointPostRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Upload File
+     */
+    async uploadFileUploadPostRaw(requestParameters: UploadFileUploadPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<any>> {
+        if (requestParameters.files === null || requestParameters.files === undefined) {
+            throw new runtime.RequiredError('files','Required parameter requestParameters.files was null or undefined when calling uploadFileUploadPost.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const consumes: runtime.Consume[] = [
+            { contentType: 'multipart/form-data' },
+        ];
+        // @ts-ignore: canConsumeForm may be unused
+        const canConsumeForm = runtime.canConsumeForm(consumes);
+
+        let formParams: { append(param: string, value: any): any };
+        let useForm = false;
+        // use FormData to transmit files using content-type "multipart/form-data"
+        useForm = canConsumeForm;
+        if (useForm) {
+            formParams = new FormData();
+        } else {
+            formParams = new URLSearchParams();
+        }
+
+        if (requestParameters.files) {
+            requestParameters.files.forEach((element) => {
+                formParams.append('files', element as any);
+            })
+        }
+
+        const response = await this.request({
+            path: `/upload`,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: formParams,
+        }, initOverrides);
+
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<any>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
+    }
+
+    /**
+     * Upload File
+     */
+    async uploadFileUploadPost(requestParameters: UploadFileUploadPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
+        const response = await this.uploadFileUploadPostRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

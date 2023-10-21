@@ -46,6 +46,12 @@ export interface PredictBody {
     data: Array<any>;
     /**
      * 
+     * @type {any}
+     * @memberof PredictBody
+     */
+    eventData?: any | null;
+    /**
+     * 
      * @type {number}
      * @memberof PredictBody
      */
@@ -87,6 +93,7 @@ export function PredictBodyFromJSONTyped(json: any, ignoreDiscriminator: boolean
         'sessionHash': !exists(json, 'session_hash') ? undefined : json['session_hash'],
         'eventId': !exists(json, 'event_id') ? undefined : json['event_id'],
         'data': json['data'],
+        'eventData': !exists(json, 'event_data') ? undefined : json['event_data'],
         'fnIndex': !exists(json, 'fn_index') ? undefined : json['fn_index'],
         'batched': !exists(json, 'batched') ? undefined : json['batched'],
         'request': !exists(json, 'request') ? undefined : RequestFromJSON(json['request']),
@@ -105,6 +112,7 @@ export function PredictBodyToJSON(value?: PredictBody | null): any {
         'session_hash': value.sessionHash,
         'event_id': value.eventId,
         'data': value.data,
+        'event_data': value.eventData,
         'fn_index': value.fnIndex,
         'batched': value.batched,
         'request': RequestToJSON(value.request),

@@ -20,6 +20,90 @@ import { exists, mapValues } from '../runtime';
  */
 export interface Flags {
     /**
+     * ==SUPPRESS==
+     * @type {boolean}
+     * @memberof Flags
+     */
+    f?: boolean;
+    /**
+     * launch.py argument: download updates for all extensions when starting the program
+     * @type {boolean}
+     * @memberof Flags
+     */
+    updateAllExtensions?: boolean;
+    /**
+     * launch.py argument: do not check python version
+     * @type {boolean}
+     * @memberof Flags
+     */
+    skipPythonVersionCheck?: boolean;
+    /**
+     * launch.py argument: do not check if CUDA is able to work properly
+     * @type {boolean}
+     * @memberof Flags
+     */
+    skipTorchCudaTest?: boolean;
+    /**
+     * launch.py argument: install the appropriate version of xformers even if you have some version already installed
+     * @type {boolean}
+     * @memberof Flags
+     */
+    reinstallXformers?: boolean;
+    /**
+     * launch.py argument: install the appropriate version of torch even if you have some version already installed
+     * @type {boolean}
+     * @memberof Flags
+     */
+    reinstallTorch?: boolean;
+    /**
+     * launch.py argument: check for updates at startup
+     * @type {boolean}
+     * @memberof Flags
+     */
+    updateCheck?: boolean;
+    /**
+     * launch.py argument: configure server for testing
+     * @type {boolean}
+     * @memberof Flags
+     */
+    testServer?: boolean;
+    /**
+     * launch.py argument: print a detailed log of what's happening at startup
+     * @type {boolean}
+     * @memberof Flags
+     */
+    logStartup?: boolean;
+    /**
+     * launch.py argument: skip all environment preparation
+     * @type {boolean}
+     * @memberof Flags
+     */
+    skipPrepareEnvironment?: boolean;
+    /**
+     * launch.py argument: skip installation of packages
+     * @type {boolean}
+     * @memberof Flags
+     */
+    skipInstall?: boolean;
+    /**
+     * launch.py argument: dump limited sysinfo file (without information about extensions, options) to disk and quit
+     * @type {boolean}
+     * @memberof Flags
+     */
+    dumpSysinfo?: boolean;
+    /**
+     * log level; one of: CRITICAL, ERROR, WARNING, INFO, DEBUG
+     * @type {string}
+     * @memberof Flags
+     */
+    loglevel?: string;
+    /**
+     * do not download CLIP model even if it's not included in the checkpoint
+     * @type {boolean}
+     * @memberof Flags
+     */
+    doNotDownloadClip?: boolean;
+    /**
      * base path where all user data is stored
      * @type {string}
      * @memberof Flags
@@ -122,6 +206,12 @@ export interface Flags {
      */
     medvram?: boolean;
     /**
+     * enable --medvram optimization just for SDXL models
+     * @type {boolean}
+     * @memberof Flags
+     */
+    medvramSdxl?: boolean;
+    /**
      * enable stable diffusion model optimizations for sacrificing a lot of speed for very low VRM usage
      * @type {boolean}
      * @memberof Flags
@@ -134,7 +224,7 @@ export interface Flags {
      */
     lowram?: boolean;
     /**
-     * disables cond/uncond batching that is enabled to save memory with --medvram or --lowvram
+     * does not do anything
      * @type {boolean}
      * @memberof Flags
      */
@@ -170,11 +260,17 @@ export interface Flags {
      */
     ngrok?: string;
     /**
-     * The region in which ngrok should start.
+     * does not do anything.
      * @type {string}
      * @memberof Flags
      */
     ngrokRegion?: string;
+    /**
+     * The options to pass to ngrok in JSON format, e.g.: '{"authtoken_from_env":true, "basic_auth":"user:password", "oauth_provider":"google", "oauth_allow_emails":"user@asdf.com"}'
+     * @type {object}
+     * @memberof Flags
+     */
+    ngrokOptions?: object;
     /**
      * enable extensions tab regardless of other options
      * @type {boolean}
@@ -242,13 +338,13 @@ export interface Flags {
      */
     deepdanbooru?: boolean;
     /**
-     * force-enables Doggettx's cross-attention layer optimization. By default, it's on for torch cuda.
+     * prefer Doggettx's cross-attention layer optimization for automatic choice of optimization
      * @type {boolean}
      * @memberof Flags
      */
     optSplitAttention?: boolean;
     /**
-     * enable memory efficient sub-quadratic cross-attention layer optimization
+     * prefer memory efficient sub-quadratic cross-attention layer optimization for automatic choice of optimization
      * @type {boolean}
      * @memberof Flags
      */
@@ -272,31 +368,31 @@ export interface Flags {
      */
     subQuadChunkThreshold?: string;
     /**
-     * force-enables InvokeAI's cross-attention layer optimization. By default, it's on when cuda is unavailable.
+     * prefer InvokeAI's cross-attention layer optimization for automatic choice of optimization
      * @type {boolean}
      * @memberof Flags
      */
     optSplitAttentionInvokeai?: boolean;
     /**
-     * enable older version of split attention optimization that does not consume all the VRAM it can find
+     * prefer older version of split attention optimization for automatic choice of optimization
      * @type {boolean}
      * @memberof Flags
      */
     optSplitAttentionV1?: boolean;
     /**
-     * enable scaled dot product cross-attention layer optimization; requires PyTorch 2.*
+     * prefer scaled dot product cross-attention layer optimization for automatic choice of optimization; requires PyTorch 2.*
      * @type {boolean}
      * @memberof Flags
      */
     optSdpAttention?: boolean;
     /**
-     * enable scaled dot product cross-attention layer optimization without memory efficient attention, makes image generation deterministic; requires PyTorch 2.*
+     * prefer scaled dot product cross-attention layer optimization without memory efficient attention for automatic choice of optimization, makes image generation deterministic; requires PyTorch 2.*
      * @type {boolean}
      * @memberof Flags
      */
     optSdpNoMemAttention?: boolean;
     /**
-     * force-disables cross-attention layer optimization
+     * prefer no cross-attention layer optimization for automatic choice of optimization
      * @type {boolean}
      * @memberof Flags
      */
@@ -313,6 +409,12 @@ export interface Flags {
      * @memberof Flags
      */
     useCpu?: Array<any>;
+    /**
+     * disable an optimization that reduces RAM use when loading a model
+     * @type {boolean}
+     * @memberof Flags
+     */
+    disableModelLoadingRamOptimization?: boolean;
     /**
      * launch gradio with 0.0.0.0 as server name, allowing to respond to network requests
      * @type {boolean}
@@ -385,6 +487,12 @@ export interface Flags {
      * @memberof Flags
      */
     gradioInpaintTool?: string;
+    /**
+     * add path to gradio's allowed_paths, make it possible to serve files from it
+     * @type {Array<any>}
+     * @memberof Flags
+     */
+    gradioAllowedPath?: Array<any>;
     /**
      * change memory type for stable diffusion to channels last
      * @type {boolean}
@@ -506,17 +614,29 @@ export interface Flags {
      */
     tlsCertfile?: string;
     /**
+     * When passed, enables the use of self-signed certificates.
+     * @type {string}
+     * @memberof Flags
+     */
+    disableTlsVerify?: string;
+    /**
      * Sets hostname of server
      * @type {string}
      * @memberof Flags
      */
     serverName?: string;
     /**
-     * Uses gradio queue; experimental option; breaks restart UI button
+     * does not do anything
      * @type {boolean}
      * @memberof Flags
      */
     gradioQueue?: boolean;
+    /**
+     * Disables gradio queue; causes the webpage to use http requests instead of websockets; was the defaul in earlier versions
+     * @type {boolean}
+     * @memberof Flags
+     */
+    noGradioQueue?: boolean;
     /**
      * Do not check versions of torch and xformers
      * @type {boolean}
@@ -536,11 +656,41 @@ export interface Flags {
      */
     noDownloadSdModel?: boolean;
     /**
-     * The maximum number of additional network model can be used.
+     * customize the subpath for gradio, use with reverse proxy
+     * @type {string}
+     * @memberof Flags
+     */
+    subpath?: string;
+    /**
+     * add /_stop route to stop server
+     * @type {boolean}
+     * @memberof Flags
+     */
+    addStopRoute?: boolean;
+    /**
+     * enable server stop/restart/kill via api
+     * @type {boolean}
+     * @memberof Flags
+     */
+    apiServerStop?: boolean;
+    /**
+     * set timeout_keep_alive for uvicorn
      * @type {number}
      * @memberof Flags
      */
-    addnetMaxModelCount?: number;
+    timeoutKeepAlive?: number;
+    /**
+     * prevent all extensions from running regardless of any other settings
+     * @type {boolean}
+     * @memberof Flags
+     */
+    disableAllExtensions?: boolean;
+    /**
+     *  prevent all extensions except built-in from running regardless of any other settings
+     * @type {boolean}
+     * @memberof Flags
+     */
+    disableExtraExtensions?: boolean;
     /**
      * Path to directory with ControlNet models
      * @type {string}
@@ -560,6 +710,18 @@ export interface Flags {
      */
     noHalfControlnet?: string;
     /**
+     * Cache size for controlnet preprocessor results
+     * @type {number}
+     * @memberof Flags
+     */
+    controlnetPreprocessorCacheSize?: number;
+    /**
+     * Set the log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+     * @type {string}
+     * @memberof Flags
+     */
+    controlnetLoglevel?: string;
+    /**
      * Path to directory with LDSR model file(s).
      * @type {string}
      * @memberof Flags
@@ -571,6 +733,12 @@ export interface Flags {
      * @memberof Flags
      */
     loraDir?: string;
+    /**
+     * Path to directory with LyCORIS networks (for backawards compatibility; can also use --lyco-dir).
+     * @type {string}
+     * @memberof Flags
+     */
+    lycoDirBackcompat?: string;
     /**
      * Path to directory with ScuNET model file(s).
      * @type {string}
@@ -604,6 +772,20 @@ export function FlagsFromJSONTyped(json: any, ignoreDiscriminator: boolean): Fla
     }
     return {
         
+        'f': !exists(json, 'f') ? undefined : json['f'],
+        'updateAllExtensions': !exists(json, 'update_all_extensions') ? undefined : json['update_all_extensions'],
+        'skipPythonVersionCheck': !exists(json, 'skip_python_version_check') ? undefined : json['skip_python_version_check'],
+        'skipTorchCudaTest': !exists(json, 'skip_torch_cuda_test') ? undefined : json['skip_torch_cuda_test'],
+        'reinstallXformers': !exists(json, 'reinstall_xformers') ? undefined : json['reinstall_xformers'],
+        'reinstallTorch': !exists(json, 'reinstall_torch') ? undefined : json['reinstall_torch'],
+        'updateCheck': !exists(json, 'update_check') ? undefined : json['update_check'],
+        'testServer': !exists(json, 'test_server') ? undefined : json['test_server'],
+        'logStartup': !exists(json, 'log_startup') ? undefined : json['log_startup'],
+        'skipPrepareEnvironment': !exists(json, 'skip_prepare_environment') ? undefined : json['skip_prepare_environment'],
+        'skipInstall': !exists(json, 'skip_install') ? undefined : json['skip_install'],
+        'dumpSysinfo': !exists(json, 'dump_sysinfo') ? undefined : json['dump_sysinfo'],
+        'loglevel': !exists(json, 'loglevel') ? undefined : json['loglevel'],
+        'doNotDownloadClip': !exists(json, 'do_not_download_clip') ? undefined : json['do_not_download_clip'],
         'dataDir': !exists(json, 'data_dir') ? undefined : json['data_dir'],
         'config': !exists(json, 'config') ? undefined : json['config'],
         'ckpt': !exists(json, 'ckpt') ? undefined : json['ckpt'],
@@ -621,6 +803,7 @@ export function FlagsFromJSONTyped(json: any, ignoreDiscriminator: boolean): Fla
         'localizationsDir': !exists(json, 'localizations_dir') ? undefined : json['localizations_dir'],
         'allowCode': !exists(json, 'allow_code') ? undefined : json['allow_code'],
         'medvram': !exists(json, 'medvram') ? undefined : json['medvram'],
+        'medvramSdxl': !exists(json, 'medvram_sdxl') ? undefined : json['medvram_sdxl'],
         'lowvram': !exists(json, 'lowvram') ? undefined : json['lowvram'],
         'lowram': !exists(json, 'lowram') ? undefined : json['lowram'],
         'alwaysBatchCondUncond': !exists(json, 'always_batch_cond_uncond') ? undefined : json['always_batch_cond_uncond'],
@@ -630,6 +813,7 @@ export function FlagsFromJSONTyped(json: any, ignoreDiscriminator: boolean): Fla
         'share': !exists(json, 'share') ? undefined : json['share'],
         'ngrok': !exists(json, 'ngrok') ? undefined : json['ngrok'],
         'ngrokRegion': !exists(json, 'ngrok_region') ? undefined : json['ngrok_region'],
+        'ngrokOptions': !exists(json, 'ngrok_options') ? undefined : json['ngrok_options'],
         'enableInsecureExtensionAccess': !exists(json, 'enable_insecure_extension_access') ? undefined : json['enable_insecure_extension_access'],
         'codeformerModelsPath': !exists(json, 'codeformer_models_path') ? undefined : json['codeformer_models_path'],
         'gfpganModelsPath': !exists(json, 'gfpgan_models_path') ? undefined : json['gfpgan_models_path'],
@@ -653,6 +837,7 @@ export function FlagsFromJSONTyped(json: any, ignoreDiscriminator: boolean): Fla
         'disableOptSplitAttention': !exists(json, 'disable_opt_split_attention') ? undefined : json['disable_opt_split_attention'],
         'disableNanCheck': !exists(json, 'disable_nan_check') ? undefined : json['disable_nan_check'],
         'useCpu': !exists(json, 'use_cpu') ? undefined : json['use_cpu'],
+        'disableModelLoadingRamOptimization': !exists(json, 'disable_model_loading_ram_optimization') ? undefined : json['disable_model_loading_ram_optimization'],
         'listen': !exists(json, 'listen') ? undefined : json['listen'],
         'port': !exists(json, 'port') ? undefined : json['port'],
         'showNegativePrompt': !exists(json, 'show_negative_prompt') ? undefined : json['show_negative_prompt'],
@@ -665,6 +850,7 @@ export function FlagsFromJSONTyped(json: any, ignoreDiscriminator: boolean): Fla
         'gradioAuthPath': !exists(json, 'gradio_auth_path') ? undefined : json['gradio_auth_path'],
         'gradioImg2imgTool': !exists(json, 'gradio_img2img_tool') ? undefined : json['gradio_img2img_tool'],
         'gradioInpaintTool': !exists(json, 'gradio_inpaint_tool') ? undefined : json['gradio_inpaint_tool'],
+        'gradioAllowedPath': !exists(json, 'gradio_allowed_path') ? undefined : json['gradio_allowed_path'],
         'optChannelslast': !exists(json, 'opt_channelslast') ? undefined : json['opt_channelslast'],
         'stylesFile': !exists(json, 'styles_file') ? undefined : json['styles_file'],
         'autolaunch': !exists(json, 'autolaunch') ? undefined : json['autolaunch'],
@@ -685,17 +871,27 @@ export function FlagsFromJSONTyped(json: any, ignoreDiscriminator: boolean): Fla
         'corsAllowOriginsRegex': !exists(json, 'cors_allow_origins_regex') ? undefined : json['cors_allow_origins_regex'],
         'tlsKeyfile': !exists(json, 'tls_keyfile') ? undefined : json['tls_keyfile'],
         'tlsCertfile': !exists(json, 'tls_certfile') ? undefined : json['tls_certfile'],
+        'disableTlsVerify': !exists(json, 'disable_tls_verify') ? undefined : json['disable_tls_verify'],
         'serverName': !exists(json, 'server_name') ? undefined : json['server_name'],
         'gradioQueue': !exists(json, 'gradio_queue') ? undefined : json['gradio_queue'],
+        'noGradioQueue': !exists(json, 'no_gradio_queue') ? undefined : json['no_gradio_queue'],
         'skipVersionCheck': !exists(json, 'skip_version_check') ? undefined : json['skip_version_check'],
         'noHashing': !exists(json, 'no_hashing') ? undefined : json['no_hashing'],
         'noDownloadSdModel': !exists(json, 'no_download_sd_model') ? undefined : json['no_download_sd_model'],
-        'addnetMaxModelCount': !exists(json, 'addnet_max_model_count') ? undefined : json['addnet_max_model_count'],
+        'subpath': !exists(json, 'subpath') ? undefined : json['subpath'],
+        'addStopRoute': !exists(json, 'add_stop_route') ? undefined : json['add_stop_route'],
+        'apiServerStop': !exists(json, 'api_server_stop') ? undefined : json['api_server_stop'],
+        'timeoutKeepAlive': !exists(json, 'timeout_keep_alive') ? undefined : json['timeout_keep_alive'],
+        'disableAllExtensions': !exists(json, 'disable_all_extensions') ? undefined : json['disable_all_extensions'],
+        'disableExtraExtensions': !exists(json, 'disable_extra_extensions') ? undefined : json['disable_extra_extensions'],
         'controlnetDir': !exists(json, 'controlnet_dir') ? undefined : json['controlnet_dir'],
         'controlnetAnnotatorModelsPath': !exists(json, 'controlnet_annotator_models_path') ? undefined : json['controlnet_annotator_models_path'],
         'noHalfControlnet': !exists(json, 'no_half_controlnet') ? undefined : json['no_half_controlnet'],
+        'controlnetPreprocessorCacheSize': !exists(json, 'controlnet_preprocessor_cache_size') ? undefined : json['controlnet_preprocessor_cache_size'],
+        'controlnetLoglevel': !exists(json, 'controlnet_loglevel') ? undefined : json['controlnet_loglevel'],
         'ldsrModelsPath': !exists(json, 'ldsr_models_path') ? undefined : json['ldsr_models_path'],
         'loraDir': !exists(json, 'lora_dir') ? undefined : json['lora_dir'],
+        'lycoDirBackcompat': !exists(json, 'lyco_dir_backcompat') ? undefined : json['lyco_dir_backcompat'],
         'scunetModelsPath': !exists(json, 'scunet_models_path') ? undefined : json['scunet_models_path'],
         'swinirModelsPath': !exists(json, 'swinir_models_path') ? undefined : json['swinir_models_path'],
     };
@@ -710,6 +906,20 @@ export function FlagsToJSON(value?: Flags | null): any {
     }
     return {
         
+        'f': value.f,
+        'update_all_extensions': value.updateAllExtensions,
+        'skip_python_version_check': value.skipPythonVersionCheck,
+        'skip_torch_cuda_test': value.skipTorchCudaTest,
+        'reinstall_xformers': value.reinstallXformers,
+        'reinstall_torch': value.reinstallTorch,
+        'update_check': value.updateCheck,
+        'test_server': value.testServer,
+        'log_startup': value.logStartup,
+        'skip_prepare_environment': value.skipPrepareEnvironment,
+        'skip_install': value.skipInstall,
+        'dump_sysinfo': value.dumpSysinfo,
+        'loglevel': value.loglevel,
+        'do_not_download_clip': value.doNotDownloadClip,
         'data_dir': value.dataDir,
         'config': value.config,
         'ckpt': value.ckpt,
@@ -727,6 +937,7 @@ export function FlagsToJSON(value?: Flags | null): any {
         'localizations_dir': value.localizationsDir,
         'allow_code': value.allowCode,
         'medvram': value.medvram,
+        'medvram_sdxl': value.medvramSdxl,
         'lowvram': value.lowvram,
         'lowram': value.lowram,
         'always_batch_cond_uncond': value.alwaysBatchCondUncond,
@@ -736,6 +947,7 @@ export function FlagsToJSON(value?: Flags | null): any {
         'share': value.share,
         'ngrok': value.ngrok,
         'ngrok_region': value.ngrokRegion,
+        'ngrok_options': value.ngrokOptions,
         'enable_insecure_extension_access': value.enableInsecureExtensionAccess,
         'codeformer_models_path': value.codeformerModelsPath,
         'gfpgan_models_path': value.gfpganModelsPath,
@@ -759,6 +971,7 @@ export function FlagsToJSON(value?: Flags | null): any {
         'disable_opt_split_attention': value.disableOptSplitAttention,
         'disable_nan_check': value.disableNanCheck,
         'use_cpu': value.useCpu,
+        'disable_model_loading_ram_optimization': value.disableModelLoadingRamOptimization,
         'listen': value.listen,
         'port': value.port,
         'show_negative_prompt': value.showNegativePrompt,
@@ -771,6 +984,7 @@ export function FlagsToJSON(value?: Flags | null): any {
         'gradio_auth_path': value.gradioAuthPath,
         'gradio_img2img_tool': value.gradioImg2imgTool,
         'gradio_inpaint_tool': value.gradioInpaintTool,
+        'gradio_allowed_path': value.gradioAllowedPath,
         'opt_channelslast': value.optChannelslast,
         'styles_file': value.stylesFile,
         'autolaunch': value.autolaunch,
@@ -791,17 +1005,27 @@ export function FlagsToJSON(value?: Flags | null): any {
         'cors_allow_origins_regex': value.corsAllowOriginsRegex,
         'tls_keyfile': value.tlsKeyfile,
         'tls_certfile': value.tlsCertfile,
+        'disable_tls_verify': value.disableTlsVerify,
         'server_name': value.serverName,
         'gradio_queue': value.gradioQueue,
+        'no_gradio_queue': value.noGradioQueue,
         'skip_version_check': value.skipVersionCheck,
         'no_hashing': value.noHashing,
         'no_download_sd_model': value.noDownloadSdModel,
-        'addnet_max_model_count': value.addnetMaxModelCount,
+        'subpath': value.subpath,
+        'add_stop_route': value.addStopRoute,
+        'api_server_stop': value.apiServerStop,
+        'timeout_keep_alive': value.timeoutKeepAlive,
+        'disable_all_extensions': value.disableAllExtensions,
+        'disable_extra_extensions': value.disableExtraExtensions,
         'controlnet_dir': value.controlnetDir,
         'controlnet_annotator_models_path': value.controlnetAnnotatorModelsPath,
         'no_half_controlnet': value.noHalfControlnet,
+        'controlnet_preprocessor_cache_size': value.controlnetPreprocessorCacheSize,
+        'controlnet_loglevel': value.controlnetLoglevel,
         'ldsr_models_path': value.ldsrModelsPath,
         'lora_dir': value.loraDir,
+        'lyco_dir_backcompat': value.lycoDirBackcompat,
         'scunet_models_path': value.scunetModelsPath,
         'swinir_models_path': value.swinirModelsPath,
     };

@@ -21,64 +21,16 @@ import { exists, mapValues } from '../runtime';
 export interface StableDiffusionProcessingTxt2Img {
     /**
      * 
-     * @type {boolean}
-     * @memberof StableDiffusionProcessingTxt2Img
-     */
-    enableHr?: boolean;
-    /**
-     * 
-     * @type {number}
-     * @memberof StableDiffusionProcessingTxt2Img
-     */
-    denoisingStrength?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof StableDiffusionProcessingTxt2Img
-     */
-    firstphaseWidth?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof StableDiffusionProcessingTxt2Img
-     */
-    firstphaseHeight?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof StableDiffusionProcessingTxt2Img
-     */
-    hrScale?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof StableDiffusionProcessingTxt2Img
-     */
-    hrUpscaler?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof StableDiffusionProcessingTxt2Img
-     */
-    hrSecondPassSteps?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof StableDiffusionProcessingTxt2Img
-     */
-    hrResizeX?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof StableDiffusionProcessingTxt2Img
-     */
-    hrResizeY?: number;
-    /**
-     * 
      * @type {string}
      * @memberof StableDiffusionProcessingTxt2Img
      */
     prompt?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    negativePrompt?: string;
     /**
      * 
      * @type {Array<string>}
@@ -183,16 +135,22 @@ export interface StableDiffusionProcessingTxt2Img {
     doNotSaveGrid?: boolean;
     /**
      * 
-     * @type {string}
+     * @type {number}
      * @memberof StableDiffusionProcessingTxt2Img
      */
-    negativePrompt?: string;
+    eta?: number;
     /**
      * 
      * @type {number}
      * @memberof StableDiffusionProcessingTxt2Img
      */
-    eta?: number;
+    denoisingStrength?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    sMinUncond?: number;
     /**
      * 
      * @type {number}
@@ -231,10 +189,100 @@ export interface StableDiffusionProcessingTxt2Img {
     overrideSettingsRestoreAfterwards?: boolean;
     /**
      * 
-     * @type {Array<any>}
+     * @type {string}
      * @memberof StableDiffusionProcessingTxt2Img
      */
-    scriptArgs?: Array<any>;
+    refinerCheckpoint?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    refinerSwitchAt?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    disableExtraNetworks?: boolean;
+    /**
+     * 
+     * @type {object}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    comments?: object;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    enableHr?: boolean;
+    /**
+     * 
+     * @type {number}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    firstphaseWidth?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    firstphaseHeight?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    hrScale?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    hrUpscaler?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    hrSecondPassSteps?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    hrResizeX?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    hrResizeY?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    hrCheckpointName?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    hrSamplerName?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    hrPrompt?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    hrNegativePrompt?: string;
     /**
      * 
      * @type {string}
@@ -247,6 +295,12 @@ export interface StableDiffusionProcessingTxt2Img {
      * @memberof StableDiffusionProcessingTxt2Img
      */
     scriptName?: string;
+    /**
+     * 
+     * @type {Array<any>}
+     * @memberof StableDiffusionProcessingTxt2Img
+     */
+    scriptArgs?: Array<any>;
     /**
      * 
      * @type {boolean}
@@ -286,16 +340,8 @@ export function StableDiffusionProcessingTxt2ImgFromJSONTyped(json: any, ignoreD
     }
     return {
         
-        'enableHr': !exists(json, 'enable_hr') ? undefined : json['enable_hr'],
-        'denoisingStrength': !exists(json, 'denoising_strength') ? undefined : json['denoising_strength'],
-        'firstphaseWidth': !exists(json, 'firstphase_width') ? undefined : json['firstphase_width'],
-        'firstphaseHeight': !exists(json, 'firstphase_height') ? undefined : json['firstphase_height'],
-        'hrScale': !exists(json, 'hr_scale') ? undefined : json['hr_scale'],
-        'hrUpscaler': !exists(json, 'hr_upscaler') ? undefined : json['hr_upscaler'],
-        'hrSecondPassSteps': !exists(json, 'hr_second_pass_steps') ? undefined : json['hr_second_pass_steps'],
-        'hrResizeX': !exists(json, 'hr_resize_x') ? undefined : json['hr_resize_x'],
-        'hrResizeY': !exists(json, 'hr_resize_y') ? undefined : json['hr_resize_y'],
         'prompt': !exists(json, 'prompt') ? undefined : json['prompt'],
+        'negativePrompt': !exists(json, 'negative_prompt') ? undefined : json['negative_prompt'],
         'styles': !exists(json, 'styles') ? undefined : json['styles'],
         'seed': !exists(json, 'seed') ? undefined : json['seed'],
         'subseed': !exists(json, 'subseed') ? undefined : json['subseed'],
@@ -313,17 +359,34 @@ export function StableDiffusionProcessingTxt2ImgFromJSONTyped(json: any, ignoreD
         'tiling': !exists(json, 'tiling') ? undefined : json['tiling'],
         'doNotSaveSamples': !exists(json, 'do_not_save_samples') ? undefined : json['do_not_save_samples'],
         'doNotSaveGrid': !exists(json, 'do_not_save_grid') ? undefined : json['do_not_save_grid'],
-        'negativePrompt': !exists(json, 'negative_prompt') ? undefined : json['negative_prompt'],
         'eta': !exists(json, 'eta') ? undefined : json['eta'],
+        'denoisingStrength': !exists(json, 'denoising_strength') ? undefined : json['denoising_strength'],
+        'sMinUncond': !exists(json, 's_min_uncond') ? undefined : json['s_min_uncond'],
         'sChurn': !exists(json, 's_churn') ? undefined : json['s_churn'],
         'sTmax': !exists(json, 's_tmax') ? undefined : json['s_tmax'],
         'sTmin': !exists(json, 's_tmin') ? undefined : json['s_tmin'],
         'sNoise': !exists(json, 's_noise') ? undefined : json['s_noise'],
         'overrideSettings': !exists(json, 'override_settings') ? undefined : json['override_settings'],
         'overrideSettingsRestoreAfterwards': !exists(json, 'override_settings_restore_afterwards') ? undefined : json['override_settings_restore_afterwards'],
-        'scriptArgs': !exists(json, 'script_args') ? undefined : json['script_args'],
+        'refinerCheckpoint': !exists(json, 'refiner_checkpoint') ? undefined : json['refiner_checkpoint'],
+        'refinerSwitchAt': !exists(json, 'refiner_switch_at') ? undefined : json['refiner_switch_at'],
+        'disableExtraNetworks': !exists(json, 'disable_extra_networks') ? undefined : json['disable_extra_networks'],
+        'comments': !exists(json, 'comments') ? undefined : json['comments'],
+        'enableHr': !exists(json, 'enable_hr') ? undefined : json['enable_hr'],
+        'firstphaseWidth': !exists(json, 'firstphase_width') ? undefined : json['firstphase_width'],
+        'firstphaseHeight': !exists(json, 'firstphase_height') ? undefined : json['firstphase_height'],
+        'hrScale': !exists(json, 'hr_scale') ? undefined : json['hr_scale'],
+        'hrUpscaler': !exists(json, 'hr_upscaler') ? undefined : json['hr_upscaler'],
+        'hrSecondPassSteps': !exists(json, 'hr_second_pass_steps') ? undefined : json['hr_second_pass_steps'],
+        'hrResizeX': !exists(json, 'hr_resize_x') ? undefined : json['hr_resize_x'],
+        'hrResizeY': !exists(json, 'hr_resize_y') ? undefined : json['hr_resize_y'],
+        'hrCheckpointName': !exists(json, 'hr_checkpoint_name') ? undefined : json['hr_checkpoint_name'],
+        'hrSamplerName': !exists(json, 'hr_sampler_name') ? undefined : json['hr_sampler_name'],
+        'hrPrompt': !exists(json, 'hr_prompt') ? undefined : json['hr_prompt'],
+        'hrNegativePrompt': !exists(json, 'hr_negative_prompt') ? undefined : json['hr_negative_prompt'],
         'samplerIndex': !exists(json, 'sampler_index') ? undefined : json['sampler_index'],
         'scriptName': !exists(json, 'script_name') ? undefined : json['script_name'],
+        'scriptArgs': !exists(json, 'script_args') ? undefined : json['script_args'],
         'sendImages': !exists(json, 'send_images') ? undefined : json['send_images'],
         'saveImages': !exists(json, 'save_images') ? undefined : json['save_images'],
         'alwaysonScripts': !exists(json, 'alwayson_scripts') ? undefined : json['alwayson_scripts'],
@@ -339,16 +402,8 @@ export function StableDiffusionProcessingTxt2ImgToJSON(value?: StableDiffusionPr
     }
     return {
         
-        'enable_hr': value.enableHr,
-        'denoising_strength': value.denoisingStrength,
-        'firstphase_width': value.firstphaseWidth,
-        'firstphase_height': value.firstphaseHeight,
-        'hr_scale': value.hrScale,
-        'hr_upscaler': value.hrUpscaler,
-        'hr_second_pass_steps': value.hrSecondPassSteps,
-        'hr_resize_x': value.hrResizeX,
-        'hr_resize_y': value.hrResizeY,
         'prompt': value.prompt,
+        'negative_prompt': value.negativePrompt,
         'styles': value.styles,
         'seed': value.seed,
         'subseed': value.subseed,
@@ -366,17 +421,34 @@ export function StableDiffusionProcessingTxt2ImgToJSON(value?: StableDiffusionPr
         'tiling': value.tiling,
         'do_not_save_samples': value.doNotSaveSamples,
         'do_not_save_grid': value.doNotSaveGrid,
-        'negative_prompt': value.negativePrompt,
         'eta': value.eta,
+        'denoising_strength': value.denoisingStrength,
+        's_min_uncond': value.sMinUncond,
         's_churn': value.sChurn,
         's_tmax': value.sTmax,
         's_tmin': value.sTmin,
         's_noise': value.sNoise,
         'override_settings': value.overrideSettings,
         'override_settings_restore_afterwards': value.overrideSettingsRestoreAfterwards,
-        'script_args': value.scriptArgs,
+        'refiner_checkpoint': value.refinerCheckpoint,
+        'refiner_switch_at': value.refinerSwitchAt,
+        'disable_extra_networks': value.disableExtraNetworks,
+        'comments': value.comments,
+        'enable_hr': value.enableHr,
+        'firstphase_width': value.firstphaseWidth,
+        'firstphase_height': value.firstphaseHeight,
+        'hr_scale': value.hrScale,
+        'hr_upscaler': value.hrUpscaler,
+        'hr_second_pass_steps': value.hrSecondPassSteps,
+        'hr_resize_x': value.hrResizeX,
+        'hr_resize_y': value.hrResizeY,
+        'hr_checkpoint_name': value.hrCheckpointName,
+        'hr_sampler_name': value.hrSamplerName,
+        'hr_prompt': value.hrPrompt,
+        'hr_negative_prompt': value.hrNegativePrompt,
         'sampler_index': value.samplerIndex,
         'script_name': value.scriptName,
+        'script_args': value.scriptArgs,
         'send_images': value.sendImages,
         'save_images': value.saveImages,
         'alwayson_scripts': value.alwaysonScripts,

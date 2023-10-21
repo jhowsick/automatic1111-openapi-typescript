@@ -1,10 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
 export * from './BodyDetectControlnetDetectPost';
-export * from './ControlNetStableDiffusionProcessingImg2Img';
-export * from './ControlNetStableDiffusionProcessingTxt2Img';
-export * from './ControlNetUnitRequest';
-export * from './ControlnetResizeMode';
 export * from './CreateResponse';
 export * from './EmbeddingItem';
 export * from './EmbeddingsResponse';
@@ -20,6 +16,7 @@ export * from './HTTPValidationError';
 export * from './HypernetworkItem';
 export * from './ImageToImageResponse';
 export * from './InterrogateRequest';
+export * from './LatentUpscalerModeItem';
 export * from './LocationInner';
 export * from './MemoryResponse';
 export * from './ModulesApiModelsProgressResponse';
@@ -31,11 +28,15 @@ export * from './PredictBody';
 export * from './PreprocessResponse';
 export * from './ProgressRequest';
 export * from './PromptStyleItem';
+export * from './QuicksettingsHint';
 export * from './RealesrganItem';
 export * from './Request';
 export * from './ResetBody';
 export * from './SDModelItem';
+export * from './SDVaeItem';
 export * from './SamplerItem';
+export * from './ScriptArg';
+export * from './ScriptInfo';
 export * from './ScriptsList';
 export * from './StableDiffusionProcessingImg2Img';
 export * from './StableDiffusionProcessingTxt2Img';

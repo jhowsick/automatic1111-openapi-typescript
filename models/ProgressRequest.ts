@@ -31,6 +31,12 @@ export interface ProgressRequest {
      * @memberof ProgressRequest
      */
     idLivePreview?: number;
+    /**
+     * boolean flag indicating whether to include the live preview image
+     * @type {boolean}
+     * @memberof ProgressRequest
+     */
+    livePreview?: boolean;
 }
 
 /**
@@ -54,6 +60,7 @@ export function ProgressRequestFromJSONTyped(json: any, ignoreDiscriminator: boo
         
         'idTask': !exists(json, 'id_task') ? undefined : json['id_task'],
         'idLivePreview': !exists(json, 'id_live_preview') ? undefined : json['id_live_preview'],
+        'livePreview': !exists(json, 'live_preview') ? undefined : json['live_preview'],
     };
 }
 
@@ -68,6 +75,7 @@ export function ProgressRequestToJSON(value?: ProgressRequest | null): any {
         
         'id_task': value.idTask,
         'id_live_preview': value.idLivePreview,
+        'live_preview': value.livePreview,
     };
 }
 
